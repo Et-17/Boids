@@ -1,0 +1,16 @@
+{
+  "name": "boids",
+  "version": "1.0.0",
+  "description": "Simulates boids with typescript",
+  "main": "index.js",
+  "repository": "https://github.com/Et-17/Boids.git",
+  "license": "Unlicense",
+  "devDependencies": {
+    "typescript": "^4.7.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "scripts": {
+    "build": "yarn run tsc && yarn run webpack"
+  }
+}
