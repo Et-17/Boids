@@ -1,24 +1,33 @@
-import { boid, move } from "./boid"
+import { boid, moveBoids } from "./boid"
+import { getCanvas, doFrames } from "./drawing";
 
 //--------------------------------------------------------------------\\
 //  Canvas Test  -----------------------------------------------------\\
 //--------------------------------------------------------------------\\
 
-const canvas = document.getElementById("primary-canvas") as HTMLCanvasElement;
+const canvas = getCanvas('primary-canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
 // Dynamically resize canvas element
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.height = window.innerHeight - 1;
 
-// Draw a red rectangle
-ctx.fillStyle = '#ff0000';
-ctx.fillRect(50, 50, 200, 100);
+// // Draw a red circle
+// ctx.fillStyle = "#ff0000";
+// drawBoids([{ pos: [100, 100], vel: [10, 10] }], ctx);
 
 //--------------------------------------------------------------------\\
-//  Boid Interface Test ----------------------------------------------\\
+//  Boid Interface Test  ---------------------------------------------\\
 //--------------------------------------------------------------------\\
 
-const test: boid = { pos: [5, 10], vel: [2, 1] };
+const test: boid[] = [{ pos: [5, 10], vel: [2, 1] }];
 console.log(test);
-console.log(move(test));
+console.log(moveBoids(test, 30));
+
+//--------------------------------------------------------------------\\
+//  Boid Update and FPS Test  ----------------------------------------\\
+//--------------------------------------------------------------------\\
+
+ctx.beginPath();
+const initial: boid[] = [{ pos: [100, 100], vel: [40, 40] }, { pos: [400, 200], vel: [80, 20] }];
+doFrames(initial, 30, ctx);
