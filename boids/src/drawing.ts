@@ -21,21 +21,33 @@ export function getCanvas(id: string): HTMLCanvasElement | null {
     }
 }
 
-function drawBoid(bd: boid, ctx: CanvasRenderingContext2D) {
-    ctx.arc(bd.pos[0], bd.pos[1], BOID_RADIUS, 0, 2 * Math.PI);
+function prepOffscreenCanvas(): HTMLCanvasElement {
+    let canvas = document.createElement("canvas");
+    canvas.width = canvas.height = BOID_RADIUS * 2;
+    let ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    ctx.fillStyle = BOID_COLOR;
+    ctx.arc(BOID_RADIUS, BOID_RADIUS, BOID_RADIUS, 0, 2 * Math.PI);
     ctx.fill();
+    return canvas;
 }
 
-export function drawBoids(boids: boid[], ctx: CanvasRenderingContext2D) {
+function drawBoid(bd: boid, ctx: CanvasRenderingContext2D, offscreen: HTMLCanvasElement) {
+    // ctx.arc(bd.pos[0], bd.pos[1], BOID_RADIUS, 0, 2 * Math.PI);
+    // ctx.fill();
+    ctx.drawImage(offscreen, bd.pos[0], bd.pos[1]);
+}
+
+export function drawBoids(boids: boid[], ctx: CanvasRenderingContext2D, offscreen: HTMLCanvasElement) {
     ctx.canvas.width = ctx.canvas.width;
     ctx.fillStyle = BOID_COLOR;
-    boids.forEach(bd => drawBoid(bd, ctx));
+    boids.forEach(bd => drawBoid(bd, ctx, offscreen));
 }
 
 export function doFrames(boids: boid[], fps: number, ctx: CanvasRenderingContext2D) {
+    let offscreen = prepOffscreenCanvas();
     let currentBoids = boids;
     setInterval(() => {
         currentBoids = moveBoids(currentBoids, fps);
-        drawBoids(currentBoids, ctx);
+        drawBoids(currentBoids, ctx, offscreen);
     }, 1000 / fps);
 }
