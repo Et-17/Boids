@@ -1,4 +1,4 @@
-import { boid, moveBoids } from "./boid"
+import { boid, moveBoids, genFlock, randomBoid } from "./boid"
 import { getCanvas, doFrames } from "./drawing";
 
 //--------------------------------------------------------------------\\
@@ -20,14 +20,15 @@ canvas.height = window.innerHeight - 1;
 //  Boid Interface Test  ---------------------------------------------\\
 //--------------------------------------------------------------------\\
 
-const test: boid[] = [{ pos: [5, 10], vel: [2, 1] }];
+const test: boid = randomBoid(window.innerWidth, innerHeight);
 console.log(test);
-console.log(moveBoids(test, 30));
+console.log(moveBoids([test], 30));
 
 //--------------------------------------------------------------------\\
 //  Boid Update and FPS Test  ----------------------------------------\\
 //--------------------------------------------------------------------\\
 
 ctx.beginPath();
-const initial: boid[] = [{ pos: [100, 100], vel: [40, 40] }, { pos: [400, 200], vel: [80, 20] }];
+const initial: boid[] = genFlock(window.innerWidth, window.innerHeight, 10);
+console.log(genFlock(window.innerWidth, window.innerHeight, 10));
 doFrames(initial, 30, ctx);
