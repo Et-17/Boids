@@ -20,14 +20,14 @@ canvas.height = window.innerHeight - 1;
 //  Boid Interface Test  ---------------------------------------------\\
 //--------------------------------------------------------------------\\
 
-const test: boid = randomBoid(window.innerWidth, innerHeight, 50);
+const test: boid = randomBoid(innerWidth, innerHeight, 50);
 console.log(test);
-console.log(moveBoids([test], 30));
+console.log(moveBoids([test], 30, innerWidth, innerHeight));
 
 //--------------------------------------------------------------------\\
 //  Boid Update and FPS Test  ----------------------------------------\\
 //--------------------------------------------------------------------\\
 
 ctx.beginPath();
-const initial: boid[] = genFlock(window.innerWidth, window.innerHeight, 50, 10);
+const initial: boid[] = genFlock(innerWidth, innerHeight, 50, 10);
 doFrames(initial, 30, ctx);

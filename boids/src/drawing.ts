@@ -47,7 +47,7 @@ export function doFrames(boids: boid[], fps: number, ctx: CanvasRenderingContext
     let offscreen = prepOffscreenCanvas();
     let currentBoids = boids;
     setInterval(() => {
-        currentBoids = moveBoids(currentBoids, fps);
+        currentBoids = moveBoids(currentBoids, fps, innerWidth, innerHeight);
         drawBoids(currentBoids, ctx, offscreen);
     }, 1000 / fps);
 }

@@ -12,6 +12,8 @@ export const COHESION_WEIGHT = 0.01;
 export const ALIGNMENT_RADIUS = COHESION_RADIUS;
 export const ALIGNMENT_WEIGHT = 1 / 8;
 
+export const WALL_TURNING_SPEED = 10;
+
 export type boid = {
     // Both of these are [x, y] coord-tuples
     pos: [number, number],
@@ -25,18 +27,19 @@ export function move(cur: boid, fps: number): boid {
     }
 }
 
-export function moveBoids(boids: boid[], fps: number): boid[] {
-    return boids.map(bd => move(applyRules(boids, bd), fps));
+export function moveBoids(boids: boid[], fps: number, maxx: number, maxy: number): boid[] {
+    return boids.map(bd => move(applyRules(boids, bd, maxx, maxy), fps));
 }
 
-export function applyRules(boids: boid[], main: boid): boid {
+export function applyRules(boids: boid[], main: boid, maxx: number, maxy: number): boid {
     return {
         pos: main.pos,
         vel: [
             main.vel,
             cohesion(getNearBoids(boids, main, COHESION_RADIUS), main),
             separation(getNearBoids(boids, main, SEPARATION_RADIUS), main),
-            alignment(getNearBoids(boids, main, ALIGNMENT_RADIUS), main)
+            alignment(getNearBoids(boids, main, ALIGNMENT_RADIUS), main),
+            bounds_checking(main, maxx, maxy)
         ].reduce(addPos)
     };
 }
@@ -69,6 +72,13 @@ export function alignment(boids: boid[], main: boid): [number, number] {
             boids.reduce((a, b) => addPos(a, b.vel), [0, 0]),
             boids.length), main.vel), ALIGNMENT_WEIGHT)
     } else { return [0, 0] }
+}
+
+export function bounds_checking(main: boid, maxx: number, maxy: number): [number, number] {
+    return mulPos([
+        main.pos[0] < 0 ? 1 : main.pos[0] > maxx ? -1 : 0,
+        main.pos[1] < 0 ? 1 : main.pos[1] > maxy ? -1 : 0
+    ], WALL_TURNING_SPEED)
 }
 
 function divPos(a: [number, number], b: number): [number, number] {
