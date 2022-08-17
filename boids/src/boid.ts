@@ -9,6 +9,9 @@ export const SEPARATION_RADIUS = 180;
 export const COHESION_RADIUS = 600;
 export const COHESION_WEIGHT = 0.01;
 
+export const ALIGNMENT_RADIUS = COHESION_RADIUS;
+export const ALIGNMENT_WEIGHT = 1 / 8;
+
 export type boid = {
     // Both of these are [x, y] coord-tuples
     pos: [number, number],
@@ -33,6 +36,7 @@ export function applyRules(boids: boid[], main: boid): boid {
             main.vel,
             cohesion(getNearBoids(boids, main, COHESION_RADIUS), main),
             separation(getNearBoids(boids, main, SEPARATION_RADIUS), main),
+            alignment(getNearBoids(boids, main, ALIGNMENT_RADIUS), main)
         ].reduce(addPos)
     };
 }
@@ -57,6 +61,14 @@ export function separation(boids: boid[], main: boid): [number, number] {
             .map(b => subPos(b.pos, main.pos))
             .reduce((a, b) => subPos(a, b))
     } else { return [0, 0]; }
+}
+
+export function alignment(boids: boid[], main: boid): [number, number] {
+    if (boids.length > 0) {
+        return mulPos(subPos(divPos(
+            boids.reduce((a, b) => addPos(a, b.vel), [0, 0]),
+            boids.length), main.vel), ALIGNMENT_WEIGHT)
+    } else { return [0, 0] }
 }
 
 function divPos(a: [number, number], b: number): [number, number] {
@@ -85,16 +97,16 @@ export function boidDistance(a: boid, b: boid): number {
         (a.pos[1] + b.pos[1]) * (a.pos[1] + b.pos[1]);
 }
 
-export function randomBoid(maxw: number, maxh: number): boid {
+export function randomBoid(maxw: number, maxh: number, maxs: number): boid {
     return {
         pos: [Math.random() * maxw, Math.random() * maxh],
-        vel: [0, 0]
+        vel: [(Math.random() - 0.5) * 2 * maxs, (Math.random() - 0.5) * 2 * maxs]
     }
 }
 
 // Typescript arrays are weird so we have to go imperitive
-export function genFlock(maxw: number, maxh: number, count: number): boid[] {
+export function genFlock(maxw: number, maxh: number, maxs: number, count: number): boid[] {
     let boids: boid[] = new Array();
-    for (let i = 0; i < count; boids[i++] = randomBoid(maxw, maxh));
+    for (let i = 0; i < count; boids[i++] = randomBoid(maxw, maxh, maxs));
     return boids;
 }
