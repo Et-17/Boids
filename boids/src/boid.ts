@@ -4,9 +4,9 @@
 export const BOID_RADIUS = 5;
 export const BOID_COLOR = "#000000";
 
-export const SEPARATION_RADIUS = 60;
+export const SEPARATION_RADIUS = 180;
 
-export const COHESION_RADIUS = 300;
+export const COHESION_RADIUS = 600;
 export const COHESION_WEIGHT = 0.01;
 
 export type boid = {
@@ -29,13 +29,11 @@ export function moveBoids(boids: boid[], fps: number): boid[] {
 export function applyRules(boids: boid[], main: boid): boid {
     return {
         pos: main.pos,
-        vel: addPos(
+        vel: [
             main.vel,
-            cohesion(
-                getNearBoids(boids, main, COHESION_RADIUS),
-                main
-            )
-        )
+            cohesion(getNearBoids(boids, main, COHESION_RADIUS), main),
+            separation(getNearBoids(boids, main, SEPARATION_RADIUS), main),
+        ].reduce(addPos)
     };
 }
 
@@ -50,6 +48,14 @@ export function cohesion(boids: boid[], main: boid): [number, number] {
             ),
             COHESION_WEIGHT
         );
+    } else { return [0, 0]; }
+}
+
+export function separation(boids: boid[], main: boid): [number, number] {
+    if (boids.length > 0) {
+        return boids
+            .map(b => subPos(b.pos, main.pos))
+            .reduce((a, b) => subPos(a, b))
     } else { return [0, 0]; }
 }
 
